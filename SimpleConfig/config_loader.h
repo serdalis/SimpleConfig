@@ -147,14 +147,16 @@ protected:
 	 */
 	typedef std::unordered_map<TSTRING, ConfigLoader*> ConfigMap;
 
-	int references; /**< number of instances of this class that are currently in use */
+	int references; /**< number of instances of this class that are currently in use. */
 
 	FileMapping FileMap; /**< Map of the file that this ConfigLoader is hooked into. */
-	StorageMap Sections; /**< Sections in the config file that have a parser hooked into them */
+	StorageMap Sections; /**< Sections in the config file that have a parser hooked into them. */
 
-	static ConfigMap OpenConfigs; /**< Stores instances for all open config files, avaliable to all config loaders */
+	static ConfigMap OpenConfigs; /**< Stores instances for all open config files, avaliable to all config loaders. */
 
-	TSTRING file_name; /**< name of the file to use for this ConfigLoader */
+	TSTRING fileName; /**< name of the file to use for this ConfigLoader. */
+	TSTRING fileType; /**< file type associated with the config file. */
+	TSTRING filePath; /**< path to the config file. */
 
 	int max_messages; /**< Maximum number of messages allowed in the message queue. */
 	std::queue<TSTRING> message_queue; /**< queue of messages used for errors and reports. */
@@ -162,8 +164,9 @@ protected:
 	/**
 	 * Constructor
 	 * @param filename name of the config file to hook into with this config loader.
+	 * @param path location of the config file.
 	 */
-	ConfigLoader( const TSTRING& filename );
+	ConfigLoader( const TSTRING& filename, const TSTRING& path = TEXT("\\") );
 
 	/**
 	 * Removes file extentions from the file name.
@@ -196,9 +199,10 @@ public:
 	/**
 	 * Function to either create a new ConfigLoader or return an existing one.
 	 * @param filename name of the config file to hook into.
+	 * @param path location of the config file.
 	 * @return pointer to either a new or existing ConfigLoader.
 	 */
-	static CONFIGHANDLE InitialiseConfig( const TSTRING& filename );
+	static CONFIGHANDLE InitialiseConfig(const TSTRING& filename, const TSTRING& path = TEXT("\\") );
 
 	/**
 	 * Adds a section to the ConfigLoader.
@@ -250,10 +254,10 @@ public:
 
 	/**
 	 * Close Config with file name.
-	 * @param ini_file name of file with a ConfigLoader Hooked to it.
+	 * @param filename name of file with a ConfigLoader Hooked to it.
 	 * @param force close even if other references are still open.
 	 */
-	static void CloseConfig(const TSTRING& ini_file, const bool force = false);
+	static void CloseConfig(const TSTRING& filename, const bool force = false);
 };
 
 class ConfigHandle

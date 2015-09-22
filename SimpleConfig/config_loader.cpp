@@ -9,7 +9,7 @@
 ConfigLoader::ConfigMap ConfigLoader::OpenConfigs;
 
 CONFIGHANDLE
-ConfigLoader::InitialiseConfig( const TSTRING& filename )
+ConfigLoader::InitialiseConfig( const TSTRING& filename, const TSTRING& path )
 {
 	TSTRING sanitised = RemoveExtension( filename );
 
@@ -19,7 +19,7 @@ ConfigLoader::InitialiseConfig( const TSTRING& filename )
 	}
 	else
 	{
-		OpenConfigs[sanitised] = new ConfigLoader( filename );
+		OpenConfigs[sanitised] = new ConfigLoader( filename, path );
 	}
 
 	return CONFIGHANDLE( new ConfigHandle( OpenConfigs[sanitised] ) );
@@ -36,9 +36,11 @@ ConfigLoader::RemoveExtension( const TSTRING& filename )
 }
 
 
-ConfigLoader::ConfigLoader( const TSTRING& filename )
+ConfigLoader::ConfigLoader( const TSTRING& filename, const TSTRING& path )
 {
-	file_name = filename;
+	fileName = filename;
+	filePath = path;
+
 	references = 1;
 
 	max_messages = 100;
@@ -188,7 +190,17 @@ ConfigLoader::LoadFile()
 	TCHAR exeLocation[MAX_PATH];
 	TSTRING line;
 	
-	if( fopen_t( &hFile,  file_name.c_str(), TEXT("r") ) != 0 )
+	TSTRING::size_type ext = fileName.rfind( '.' );
+	if ( ext != TSTRING::npos )
+	{
+		fileType = fileName.substr( ext );
+	}
+	else
+	{
+		fileType = TEXT(".ini");
+	}
+
+	if( filePath.size() > 2 && filePath[1] != TEXT(':') )
 	{
 		/* if file opening fails attempt to use the exe location */
 		HMODULE hm = NULL;
@@ -198,16 +210,18 @@ ConfigLoader::LoadFile()
 
 		GetModuleFileName( hm, exeLocation, MAX_PATH );
 		TCHAR* PathEnd = PathFindFileName( exeLocation );
-		*PathEnd = '\0';
+		*PathEnd = TEXT('\0');
 
-		file_name = exeLocation + file_name;
-		if( fopen_t( &hFile, file_name.c_str(), TEXT("r") ) != 0 )
-		{
-			return;
-		}
+		filePath = TSTRING( exeLocation ) + filePath + TEXT('\\');
 	}
 
-	/* DEFAULT is now a default section that will be used if no others are avaliabel */
+	if ( fopen_t( &hFile,  TSTRING( filePath + fileName ).c_str(), TEXT("r") ) != 0 )
+	{
+		AddMessage( TEXT("Failed to open config file: %s"), filePath + fileName );
+		return;
+	}
+
+	/* DEFAULT is now a default section that will be used if no others are avaliable */
 	sectionMap = &FileMap[TEXT("DEFAULT")];
 
 	while( EOF != fscanf_s( hFile, "%[^\n]", readBuffer, sMaxCmp*2 ) )
@@ -250,10 +264,19 @@ ConfigLoader::LoadFile()
 void
 ConfigLoader::CloseAll( const bool force )
 {
-	ConfigMap::iterator cit;
-	for ( cit = OpenConfigs.begin(); cit != OpenConfigs.end(); ++cit )
+	TSTRING::size_type i = 0;
+	std::vector<TSTRING> filenames;
+
+	ConfigMap::iterator sit;
+	for ( sit = OpenConfigs.begin(); sit != OpenConfigs.end(); ++sit )
 	{
-		CloseConfig( cit->second->file_name, force );
+		filenames.push_back( sit->second->fileName );
+	}
+
+	/* we need to do this because CloseConfig will invalidate sit when called */
+	for ( i = 0; i < filenames.size(); ++i )
+	{
+		CloseConfig( filenames[i], true );
 	}
 }
 
@@ -261,26 +284,32 @@ ConfigLoader::CloseAll( const bool force )
 void
 ConfigLoader::CloseConfig(ConfigLoader* config, const bool force)
 {
-	CloseConfig( config->file_name, force );
+	CloseConfig( config->fileName, force );
 }
 
 
 void
-ConfigLoader::CloseConfig(const TSTRING& ini_file, const bool force)
+ConfigLoader::CloseConfig(const TSTRING& filename, const bool force)
 {
-	TSTRING sanitised = RemoveExtension( ini_file );
-	ConfigMap::iterator cit;
+	TSTRING sanitised = RemoveExtension( filename );
+	ConfigMap::iterator sit;
 
-	if( OpenConfigs.size() > 0 )
+	if ( OpenConfigs.size() > 0 )
 	{
 		if( OpenConfigs.count( sanitised ) )
 		{
-			cit = OpenConfigs.find( sanitised );
-			cit->second->references -= 1;
-			if( cit->second->references == 0 || force )
+			sit = OpenConfigs.find( sanitised );
+
+			sit->second->references -= 1;
+			if ( force )
 			{
-				delete cit->second;
-				OpenConfigs.erase( cit );
+				sit->second->references = 0;
+			}
+
+			if ( sit->second->references <= 0 )
+			{
+				delete sit->second;
+				OpenConfigs.erase( sit );
 			}
 		}
 	}
