@@ -35,11 +35,11 @@ trim( TSTRING& s )
 TSTRING
 Int64ToString( const INT64 num )
 {
-	int i = 0;
+	INT64 i = 0;
+	INT64 p_num = num;
+
 	int neg = 0;
 	int digits = 0;
-
-	INT64 p_num = num;
 
 	TSTRING str( TEXT("0") );
 
@@ -56,14 +56,13 @@ Int64ToString( const INT64 num )
 
 	if ( digits > 0 )
 	{
-		i = digits + neg;
-		str.resize( i );
+		str.resize( digits + neg );
 
 		if ( neg ) str[0] = '0';
 
-		for ( i = i - 1; p_num > 0; i -= 1 )
+		for ( ; p_num > 0; digits -= 1 )
 		{
-			str[i] = '0' + ( p_num % 10 );
+			str[digits] = '0' + ( p_num % 10 );
 			p_num = (INT64) ( p_num * 0.1 );
 		}
 	}
