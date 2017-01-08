@@ -127,6 +127,8 @@ ConfigLoader::AddSection(ParserBase* section)
 			{
 				line = sectionMap[i];
 				index = line.find( '=' );
+				/* Section is designed to use indexing ( key, value ), but if there is
+				 * no key found, then an 'auto-key' will be generated. */
 				if( index != TSTRING::npos )
 				{
 					key = util::trim( line.substr( 0, index ) );
@@ -148,6 +150,12 @@ ConfigLoader::AddSection(ParserBase* section)
 		}
 	}
 	return retrn;
+}
+
+void
+ConfigLoader::DeleteSection( const TSTRING& section_name )
+{
+	/* Not currently implemented, ( never been needed ). */
 }
 
 
