@@ -15,7 +15,7 @@ COMING SOON.
 
 ### Simple Usage Example
 
-```
+```C++
 #include "config_loader.h"
 
 int
