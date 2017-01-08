@@ -156,3 +156,4 @@ $RECYCLE.BIN/
 .DS_Store
 /SimpleConfig.VC.VC.opendb
 /SimpleConfig.VC.db
+*.VC.db
