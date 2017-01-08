@@ -11,6 +11,7 @@
 #define strcspn_t wcscspn
 #define vsprintf_t  vswprintf
 #define vsnprintf_t _vsnwprintf
+#define fscanf_t fwscanf_s
 
 #ifdef _STRING_
 typedef std::wstring TSTRING;
@@ -24,6 +25,7 @@ typedef std::wstring TSTRING;
 #define strcspn_t strcspn
 #define vsprintf_t  vsprintf
 #define vsnprintf_t vsnprintf
+#define fscanf_t fscanf_s
 
 #ifdef _STRING_
 typedef std::string TSTRING;
