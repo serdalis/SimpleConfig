@@ -276,7 +276,7 @@ public:
 	 */
 	bool AddSection( ParserBase* section )
 	{
-		config->AddSection( section );
+		return config->AddSection( section );
 	}
 
 	/**
@@ -286,7 +286,7 @@ public:
 	 */
 	ParserBase* GetSection(const TSTRING& section_name)
 	{
-		config->GetSection( section_name );
+		return config->GetSection( section_name );
 	}
 
 	/**

@@ -232,10 +232,10 @@ ConfigLoader::LoadFile()
 	/* DEFAULT is now a default section that will be used if no others are avaliable */
 	sectionMap = &FileMap[TEXT("DEFAULT")];
 
-	while( EOF != fscanf_s( hFile, "%[^\n]", readBuffer, sMaxCmp*2 ) )
+	while( EOF != fscanf_t( hFile, TEXT( "%[^\n]" ), readBuffer, sMaxCmp*2 ) )
 	{
 		line.assign( readBuffer );
-		fscanf_s( hFile, "%*[\n]" ); /*-- eat the newline --*/
+		fscanf_t( hFile, TEXT( "%*[\n]" ) ); /*-- eat the newline --*/
 
 		/*-- if this line is not a comment and not blank--*/
 		if ( line[0] != ';' && line[0] )
