@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/serdalis/SimpleConfig.svg?branch=master)](https://travis-ci.org/serdalis/SimpleConfig) [![Coverage Status](https://coveralls.io/repos/github/serdalis/SimpleConfig/badge.svg?branch=master)](https://coveralls.io/github/serdalis/SimpleConfig?branch=master)
+[![Build Status](https://travis-ci.org/serdalis/SimpleConfig.svg?branch=master)](https://travis-ci.org/serdalis/SimpleConfig)
+[![Coverage Status](https://coveralls.io/repos/github/serdalis/SimpleConfig/badge.svg?branch=master)](https://coveralls.io/github/serdalis/SimpleConfig?branch=master)
 
 ---
 
