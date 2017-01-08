@@ -44,4 +44,5 @@ main( int argc, char* argv[] )
 
 	/* config handle will auto close the configuration file when it is out of scope. */
 	return 0;
-}```
+}
+```
