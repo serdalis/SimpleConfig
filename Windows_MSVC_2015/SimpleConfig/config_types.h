@@ -44,6 +44,10 @@ public:
 	 */
 	virtual void Parse( const TSTRING& key, const TSTRING& value ) {};
 
+    /**
+     * Function returns the most recent error message from the parser.
+     * @return Last logged error message from the parser.
+     */
 	TSTRING CheckMessage();
 };
 

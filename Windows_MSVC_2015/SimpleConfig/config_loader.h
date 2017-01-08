@@ -8,13 +8,17 @@
  * File containing ConfigLoader and a DefaultParser.
  */
 
+/** MSVC Command to stop asking for `_s` versions of input / output commands. */
 #define _CRT_SECURE_NO_WARNINGS
+
+/** MSVC Command to stop VC complaining about the usage of swprintf */
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
 #include <queue>
 #include <string>
 #include <unordered_map>
 
+/** Make sure windows doesn't include winsock and other un-nessisary headers */
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -260,13 +264,22 @@ public:
 	static void CloseConfig(const TSTRING& filename, const bool force = false);
 };
 
+/**
+ * Wrapper class that allows configuration files to automatically close when they are
+ * out of scope.
+ * This class is returned by when a configuration file is opened or referenced.
+ */
 class ConfigHandle
 {
 	ConfigLoader* config;
 
 public:
-	ConfigHandle( ConfigLoader* con )
-		: config( con ) {}
+    /**
+     * Constructor, takes in a configuration file handle which will be wrapped.
+     * @param conf cofniguration file pointer that will be wrapped by this class.
+     */
+	ConfigHandle( ConfigLoader* conf )
+		: config( conf ) {}
 
 
 	/**
@@ -314,6 +327,7 @@ public:
 	}
 };
 
+/** Opens a configuration file */
 #define OPEN_CONFIG ConfigLoader::InitialiseConfig
 
 #endif
