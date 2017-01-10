@@ -15,6 +15,7 @@
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
 #include <queue>
+#include <memory>
 #include <string>
 #include <unordered_map>
 

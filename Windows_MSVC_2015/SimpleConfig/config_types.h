@@ -22,6 +22,10 @@
  */
 class ParserBase
 {
+public:
+	int auto_key;		  /**< last used auto generated key value. */
+	TSTRING section_name; /**< Name of section this is hooked into. */
+
 protected:
 
 	TSTRING message; /**< Message will be set when an unexpected event happens. */
@@ -31,12 +35,12 @@ protected:
 	 * @param sectionName name of the section being hooked into.
 	 */
 	ParserBase(const TSTRING& sectionName)
-		: section_name(sectionName), auto_key(0) {};
+		: auto_key(0)
+    {
+        section_name = sectionName;
+    };
 
 public:
-	int auto_key;		  /**< last used auto generated key value. */
-	TSTRING section_name; /**< Name of section this is hooked into. */
-
 	/**
 	 * Virtual function which will add to the parsers dictionary.
 	 * @param key key to be used for lookups.
@@ -52,6 +56,12 @@ public:
 	{
 		return message;
 	}
+    
+    /**
+     * Virtual Destructor for correct polymorphism.
+     * Does Nothing.
+     */
+    virtual ~ParserBase() {};
 };
 
 /**
@@ -124,7 +134,7 @@ public:
 	TSTRING GetAt( const int index )
 	{
 		int i = index;
-		MapType::iterator mit = Configuration.begin();
+		typename MapType::iterator mit = Configuration.begin();
 		/* maps don't actually have indexes, this is a hack just
 		 * so we can access every element without knowing its key */
 		while ( i && mit != Configuration.end() )

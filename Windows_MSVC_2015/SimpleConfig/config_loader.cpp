@@ -1,10 +1,9 @@
 #include "config_loader.h"
 
 #include <vector>
-#include <Shlwapi.h>
+#include <fstream>
+#include <sstream>
 #include <algorithm>
-
-#pragma comment( lib, "Shlwapi.lib" )
 
 ConfigLoader::ConfigMap ConfigLoader::OpenConfigs;
 
@@ -131,8 +130,11 @@ ConfigLoader::AddSection(ParserBase* section)
 				 * no key found, then an 'auto-key' will be generated. */
 				if( index != TSTRING::npos )
 				{
-					key = util::trim( line.substr( 0, index ) );
-					value = util::trim( line.substr( index + 1 ) );
+					key = line.substr( 0, index );
+                    key = util::trim( key );
+                    
+					value = line.substr( index + 1 );
+                    value = util::trim( value );
 				}
 				else
 				{
@@ -188,15 +190,10 @@ ConfigLoader::GetSection( const TSTRING& section_name )
 void
 ConfigLoader::LoadFile()
 {
-	const int sMaxCmp = 512;
-
-	FILE* hFile = nullptr;
 	TSTRING value;
 	std::vector<TSTRING>* sectionMap = nullptr;
-
-	TCHAR readBuffer[sMaxCmp*2];
+    
 	TCHAR exeLocation[MAX_PATH];
-	TSTRING line;
 	
 	TSTRING::size_type ext = fileName.rfind( '.' );
 	if ( ext != TSTRING::npos )
@@ -217,26 +214,30 @@ ConfigLoader::LoadFile()
 							&hm);
 
 		GetModuleFileName( hm, exeLocation, MAX_PATH );
-		TCHAR* PathEnd = PathFindFileName( exeLocation );
-		*PathEnd = TEXT('\0');
-
-		filePath = TSTRING( exeLocation ) + filePath + TEXT('\\');
+        
+        TSTRING exeLocationStr( exeLocation );
+        const size_t last_slash_idx = exeLocationStr.find_last_of( TEXT("\\/") );
+        if (TSTRING::npos != last_slash_idx)
+        {
+            exeLocationStr.erase(last_slash_idx + 1, exeLocationStr.size() );
+        }
+        
+		filePath = TSTRING( exeLocationStr ) + filePath + TEXT('\\');
 	}
 
-	if ( fopen_t( &hFile,  TSTRING( filePath + fileName ).c_str(), TEXT("r") ) != 0 )
+	TSTREAM infile( filePath + fileName );
+	if ( !infile.is_open() )
 	{
-		AddMessage( TEXT("Failed to open config file: %s"), filePath + fileName );
+		AddMessage( TEXT("Failed to open config file: %s"), TSTRING(filePath + fileName).c_str() );
 		return;
 	}
 
 	/* DEFAULT is now a default section that will be used if no others are avaliable */
 	sectionMap = &FileMap[TEXT("DEFAULT")];
 
-	while( EOF != fscanf_t( hFile, TEXT( "%[^\n]" ), readBuffer, sMaxCmp*2 ) )
-	{
-		line.assign( readBuffer );
-		fscanf_t( hFile, TEXT( "%*[\n]" ) ); /*-- eat the newline --*/
-
+    TSTRING line;
+	while (std::getline(infile, line))
+    {
 		/*-- if this line is not a comment and not blank--*/
 		if ( line[0] != ';' && line[0] )
 		{
@@ -259,12 +260,6 @@ ConfigLoader::LoadFile()
 				}
 			}
 		}
-	}
-
-	if ( hFile )
-	{
-		fclose( hFile );
-		hFile = nullptr;
 	}
 }
 

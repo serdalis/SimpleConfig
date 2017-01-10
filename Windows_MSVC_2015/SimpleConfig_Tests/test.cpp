@@ -6,7 +6,16 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SimpleConfig_Tests
-{		
+{
+	TEST_CLASS( ConfigFile_Test )
+	{
+	public:
+		TEST_METHOD( LoadFile_Test )
+		{
+
+		}
+	};
+
 	TEST_CLASS( DefaultParser_Test )
 	{
 	public:
