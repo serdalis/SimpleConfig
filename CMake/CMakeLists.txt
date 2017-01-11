@@ -25,6 +25,6 @@ set( LIBRARY_OUTPUT_PATH ${OUT_LIB} )
 add_executable( SimpleConfig ${main_files} )
 target_link_libraries ( SimpleConfig )
 
-target_include_directories( SimpleConfig PUBLIC ${SRC_MAIN} )
+include_directories( ${SRC_MAIN} )
 
 install( TARGETS SimpleConfig DESTINATION build )

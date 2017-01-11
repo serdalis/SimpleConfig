@@ -4,6 +4,7 @@
 rm -rf "CMakeCache.txt"
 #
 # regenerate the build files using CMake
+#
 cmake -G "Unix Makefiles" .
 #
 # Build the project
