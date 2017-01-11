@@ -4,13 +4,15 @@ dist: precise
 language: cpp
 
 compiler: gcc
-    addons:
-        apt:
-            sources:
-                - ubuntu-toolchain-r-test
-            packages:
-                - g++-4.9
-    env: COMPILER=g++-4.9
+
+addons:
+    apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-4.9
+        
+env: COMPILER=g++-4.9
 
 before_install:
     - sudo apt-get update -qq
