@@ -2,7 +2,7 @@ language: cpp
 compiler: g++
 
 before_script: cd CMake
-script: ./build
+script: build
 
 os: linux
 branches:
