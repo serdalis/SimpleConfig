@@ -1,8 +1,11 @@
 language: cpp
 compiler: g++
 
-before_script: cd CMake
-script: build
+before_script: 
+  - cd CMake
+  - chmod +x build.sh
+  
+script: ./build.sh
 
 os: linux
 branches:
