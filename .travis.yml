@@ -1,6 +1,23 @@
+# Use the newwer distros to provide better tools.
+sudo: required
+dist: precise
 language: cpp
-compiler: g++
 
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: COMPILER=g++-4.9
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libopencv-dev
+      
 before_script: 
   - cd CMake
   - chmod +x build.sh
@@ -13,3 +30,4 @@ branches:
   - master
   - Beta
   - Development
+  
