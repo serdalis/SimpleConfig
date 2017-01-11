@@ -1,8 +1,5 @@
 :: Custom build command script for use with CMake
 ::
-:: make sure we are in the build directory
-cd build
-::
 :: Delete the old CMake cache so we use the new configuration.
 del CMakeCache.txt
 ::
