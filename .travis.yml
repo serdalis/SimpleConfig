@@ -1,8 +1,31 @@
+# Use the newwer distros to provide better tools.
+sudo: required
+dist: precise
 language: cpp
+
 compiler: gcc
-os: windows
+
+addons:
+    apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-4.9
+        
+env: COMPILER=g++-4.9
+
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -y libopencv-dev
+
+script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
+
 branches:
   only:
   - master
   - Beta
   - Development
+  
